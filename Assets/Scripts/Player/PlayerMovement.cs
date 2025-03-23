@@ -21,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
     #endregion
     [Space]
     #region Slide
-    [Header("Slide Settings")] // Ustawienia œlizgu
+    [Header("Slide Settings")] // Ustawienia Å›lizgu
     public float slideDuration = 0.75f;
     #endregion
     [Space]
@@ -48,9 +48,10 @@ public class PlayerMovement : MonoBehaviour
     private float wallJumpTimer;
     #endregion
 
-    // Wa¿ne zmienne!!!
+    // WaÅ¼ne zmienne!!!
     private CharacterController controller;
-    private Vector3 velocity;
+    [HideInInspector]
+    public Vector3 velocity;
     private bool isGrounded;
     private bool isCrouching;
     private bool isSliding;
@@ -80,7 +81,7 @@ public class PlayerMovement : MonoBehaviour
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        float currentSpeed = walkSpeed; // Aktualna prêdkoœæ ruchu (do sterowania Head Bobbingiem)
+        float currentSpeed = walkSpeed; // Aktualna prÄ™dkoÅ›Ä‡ ruchu (do sterowania Head Bobbingiem)
 
         if (Input.GetKey(KeyCode.LeftShift) && !isCrouching && !isSliding)
             currentSpeed = sprintSpeed;
@@ -120,14 +121,14 @@ public class PlayerMovement : MonoBehaviour
             isCrouching = false;
         }
 
-        // Smooth zmiana wysokoœci
+        // Smooth zmiana wysokoÅ›ci
         float targetHeight = isCrouching ? crouchHeight : standHeight;
         controller.height = Mathf.Lerp(controller.height, targetHeight, Time.deltaTime * crouchTransitionSpeed);
     }
 
     private void HandleSlide()
     {
-        // Warunek: Sprint + Kucniêcie = Œlizg
+        // Warunek: Sprint + KucniÄ™cie = Åšlizg
         if (Input.GetKeyDown(KeyCode.C) && Input.GetKey(KeyCode.LeftShift) && !isSliding && isGrounded)
         {
             isSliding = true;
@@ -150,7 +151,7 @@ public class PlayerMovement : MonoBehaviour
         if (dashCooldownTimer > 0)
             dashCooldownTimer -= Time.deltaTime;
 
-        // Rozpoczêcie dasha
+        // RozpoczÄ™cie dasha
         if (Input.GetKeyDown(KeyCode.E) && dashCooldownTimer <= 0 && !isDashing)
         {
             isDashing = true;
@@ -162,8 +163,8 @@ public class PlayerMovement : MonoBehaviour
         if (isDashing)
         {
             dashTimer += Time.deltaTime;
-            float dashProgress = dashTimer / dashDuration; // Jak daleko w dasha jesteœmy (0-1)
-            float currentSpeed = dashSpeed * dashSpeedCurve.Evaluate(dashProgress); // Prêdkoœæ wg krzywej
+            float dashProgress = dashTimer / dashDuration; // Jak daleko w dasha jesteÅ›my (0-1)
+            float currentSpeed = dashSpeed * dashSpeedCurve.Evaluate(dashProgress); // PrÄ™dkoÅ›Ä‡ wg krzywej
 
             controller.Move(dashDirection * currentSpeed * Time.deltaTime);
 
@@ -176,44 +177,44 @@ public class PlayerMovement : MonoBehaviour
 
         if (dashCooldownTimer > 0) // Sprawdzanie cooldownu dasha
         {
-            Debug.Log("Dash Cooldown: " + Mathf.Floor(dashCooldownTimer)); // Wyœwietlanie czasu cooldownu dasha do sprawdzania
+            Debug.Log("Dash Cooldown: " + Mathf.Floor(dashCooldownTimer));
         }
     }
 
     private void HandleWallJump()
     {
-        // Sprawdzenie, czy gracz dotyka œciany
+        // Sprawdzenie, czy gracz dotyka Å›ciany
         bool isTouchingWall = Physics.Raycast(transform.position, transform.right, 1f, wallLayer) ||
                               Physics.Raycast(transform.position, -transform.right, 1f, wallLayer);
 
         bool isMovingForward = Input.GetAxis("Vertical") > 0;
 
-        // Jeœli gracz dotyka œciany, nie jest na ziemi i naciska skok – wykonujemy wall jump
+        // JeÅ›li gracz dotyka Å›ciany, nie jest na ziemi, naciska skok i (xd) nie jest w trakcie wall jumpa
         if (isTouchingWall && !isGrounded && Input.GetButtonDown("Jump") && !isWallJumping)
         {
             isWallJumping = true;
             wallJumpTimer = 1f;
 
-            // Okreœlenie kierunku odbicia od œciany
-            Vector3 jumpDirection = (transform.forward * 0.5f + Vector3.up).normalized; // Mniej ruchu w bok, wiêcej do góry
+            // OkreÅ›lenie kierunku odbicia od Å›ciany
+            Vector3 jumpDirection = (transform.forward * 0.5f + Vector3.up).normalized; // Mniej ruchu w bok, wiÄ™cej do gÃ³ry dla fajniejszego efektu
 
-            // Nadanie si³y skoku
+            // Nadanie siÅ‚y skoku
             velocity.x = jumpDirection.x * wallJumpForce;
             velocity.y = jumpDirection.y * wallJumpForce;
             velocity.z = jumpDirection.z * wallJumpForce;
         }
 
 
-        // Jeœli wall jump trwa, licznik odlicza
+        // Start licznika w momencie rozpoczÄ™cia wall jumpa
         if (isWallJumping)
         {
             wallJumpTimer -= Time.deltaTime;
 
-            // Reset po zakoñczeniu wall jumpa
+            // Reset po zakoÅ„czeniu wall jumpa
             if (wallJumpTimer <= 0 || isGrounded)
             {
                 isWallJumping = false;
-                velocity.x = 0; // Reset poziomego ruchu po skoku
+                velocity.x = 0;
                 velocity.z = 0;
             }
         }
@@ -224,7 +225,7 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    // Metody zwracaj¹ce boola
+    // Metody zwracajÄ…ce boola
     public bool IsGrounded()
     {
         return isGrounded;

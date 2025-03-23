@@ -105,14 +105,14 @@ public class PlayerCamera : MonoBehaviour
             if (Input.GetKey(KeyCode.LeftShift) && !playerMovement.IsSliding()) speedMultiplier = sprintMultiplier; // Bieg
             if (Input.GetKey(KeyCode.C)) speedMultiplier = crouchMultiplier; // Kucanie
 
-            // Zmienna prędkość kołysania
+            // Zmienna prędkość head-bobbingu
             float finalHeadBobSpeed = baseHeadBobSpeed * speedMultiplier;
             float finalHeadBobAmount = baseHeadBobAmount * speedMultiplier;
             float finalHeadTiltAmount = baseHeadTiltAmount * speedMultiplier;
 
             bobTimer += Time.deltaTime * finalHeadBobSpeed;
 
-            // Kołysanie góra-dół
+            // Bobbing góra-dół
             float bobOffset = Mathf.Sin(bobTimer) * finalHeadBobAmount;
 
             // Przechylanie na boki
