@@ -160,13 +160,20 @@ public class PlayerMovement : MonoBehaviour
         }
 
         // Wykonanie dasha
-        if (isDashing)
+        if (isDashing && !isGrounded)
         {
-            dashTimer += Time.deltaTime;
-            float dashProgress = dashTimer / dashDuration; // Jak daleko w dasha jesteśmy (0-1)
-            float currentSpeed = dashSpeed * dashSpeedCurve.Evaluate(dashProgress); // Prędkość wg krzywej
+            DashMomnentum();
 
-            controller.Move(dashDirection * currentSpeed * Time.deltaTime);
+            if (dashTimer >= dashDuration || isGrounded)
+            {
+                isDashing = false;
+                dashCooldownTimer = dashCooldown; // Reset cooldownu
+            }
+        }
+
+        else if (isDashing && isGrounded)
+        {
+            DashMomnentum();
 
             if (dashTimer >= dashDuration)
             {
@@ -179,6 +186,16 @@ public class PlayerMovement : MonoBehaviour
         {
             Debug.Log("Dash Cooldown: " + Mathf.Floor(dashCooldownTimer));
         }
+    }
+
+    // Metoda do wywołania w HandleDash
+    void DashMomnentum()
+    {
+        dashTimer += Time.deltaTime;
+        float dashProgress = dashTimer / dashDuration; // Jak daleko w dasha jesteśmy (0-1)
+        float currentSpeed = dashSpeed * dashSpeedCurve.Evaluate(dashProgress); // Prędkość wg krzywej
+
+        controller.Move(dashDirection * currentSpeed * Time.deltaTime);
     }
 
     private void HandleWallJump()

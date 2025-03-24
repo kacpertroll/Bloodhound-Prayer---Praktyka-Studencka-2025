@@ -25,8 +25,6 @@ public class PlayerGrapplingHook : MonoBehaviour
 
     private void Update()
     {
-        Debug.Log("Is Grounded?: " + controller.isGrounded);
-
         if (Input.GetKeyDown(KeyCode.Mouse1))
         {
             StartGrapple();
