@@ -23,6 +23,9 @@ public class PlayerMovement : MonoBehaviour
     #region Slide
     [Header("Slide Settings")] // Ustawienia ślizgu
     public float slideDuration = 0.75f;
+    public float slideJumpForce = 5f;
+
+    private bool slideJump = false;
     #endregion
     [Space]
     #region Dash
@@ -65,6 +68,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         isGrounded = controller.isGrounded; // Fajnie bo Char Contrl ma wbudowane sprawdzanie czy jest na ziemi
+        Debug.Log("Is Grounded: " + isGrounded);
 
         HandleMovement();
         HandleCrouch();
@@ -103,7 +107,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (isGrounded && velocity.y < 0)
         {
-            velocity.y = -2f; // Grawitacja bo Char Contrl nie ma
+            velocity.y = -2f;
+
+            if (slideJump) // Jeśli skok był ze ślizgu, to przy lądowaniu zeruje siłę
+            {
+                velocity.x = 0;
+                velocity.z = 0;
+                slideJump = false;
+            }
         }
 
         velocity.y += gravity * Time.deltaTime;
@@ -112,23 +123,22 @@ public class PlayerMovement : MonoBehaviour
 
     private void HandleCrouch()
     {
-        if (Input.GetKeyDown(KeyCode.C) && !isSliding)
+        if (Input.GetKeyDown(KeyCode.C) && !isSliding && isGrounded)
         {
             isCrouching = true;
+            
         }
         else if (Input.GetKeyUp(KeyCode.C))
         {
             isCrouching = false;
         }
 
-        // Smooth zmiana wysokości
         float targetHeight = isCrouching ? crouchHeight : standHeight;
         controller.height = Mathf.Lerp(controller.height, targetHeight, Time.deltaTime * crouchTransitionSpeed);
     }
 
     private void HandleSlide()
     {
-        // Warunek: Sprint + Kucnięcie = Ślizg
         if (Input.GetKeyDown(KeyCode.C) && Input.GetKey(KeyCode.LeftShift) && !isSliding && isGrounded)
         {
             isSliding = true;
@@ -142,6 +152,14 @@ public class PlayerMovement : MonoBehaviour
             {
                 isSliding = false;
             }
+        }
+
+        if (isSliding && Input.GetKeyDown(KeyCode.Space))
+        {
+            velocity.y = Mathf.Sqrt(slideJumpForce * -2f * gravity); // Nadajemy pionowy skok
+            velocity += transform.forward * slideSpeed; // Nadajemy momentum poziome
+            isSliding = false;
+            slideJump = true; // Oznaczamy, że skok był ze ślizgu
         }
     }
 
