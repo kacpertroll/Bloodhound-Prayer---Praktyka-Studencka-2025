@@ -68,7 +68,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         isGrounded = controller.isGrounded; // Fajnie bo Char Contrl ma wbudowane sprawdzanie czy jest na ziemi
-        Debug.Log("Is Grounded: " + isGrounded);
+        //Debug.Log("Is Grounded: " + isGrounded);
 
         HandleMovement();
         HandleCrouch();
