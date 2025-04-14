@@ -35,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
     public float dashSpeed = 20f;
     public float dashDuration = 0.2f;
     public float dashCooldown = 5f;
+    public KeyCode dashKey = KeyCode.E;
     private bool isDashing = false;
     private float dashTimer = 0f;
     private float dashCooldownTimer = 0f;
@@ -170,7 +171,7 @@ public class PlayerMovement : MonoBehaviour
             dashCooldownTimer -= Time.deltaTime;
 
         // Rozpoczęcie dasha
-        if (Input.GetKeyDown(KeyCode.E) && dashCooldownTimer <= 0 && !isDashing)
+        if (Input.GetKeyDown(dashKey) && dashCooldownTimer <= 0 && !isDashing)
         {
             isDashing = true;
             dashTimer = 0f; // Resetujemy timer dasha
