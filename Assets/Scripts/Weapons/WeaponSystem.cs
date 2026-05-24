@@ -40,6 +40,9 @@ public class WeaponSystem : MonoBehaviour
                 if (foundWeapon != null)
                 {
                     PickupWeapon(foundWeapon);
+                    if (foundWeapon.GetComponentInChildren<Animator>() != null)
+                    foundWeapon.GetComponentInChildren<Animator>().SetTrigger("Picked Up");
+                    foundWeapon.GetComponentInChildren<Animator>().SetBool("Holding", true);
                 }
             }
         }
@@ -75,13 +78,11 @@ public class WeaponSystem : MonoBehaviour
         equippedWeapon.OnEquipped();
     }
 
-
-
-
     void DropWeapon(WeaponItem weapon)
     {
         weapon.transform.SetParent(null);
-        weapon.gameObject.SetActive(true); // upewnij siê, ¿e jest widoczna
+        weapon.gameObject.SetActive(true);
+        weapon.GetComponentInChildren<Animator>().SetBool("Holding", false);
 
         Rigidbody rb = weapon.GetComponent<Rigidbody>();
         if (rb)
@@ -127,5 +128,7 @@ public class WeaponSystem : MonoBehaviour
 
         equippedWeapon.gameObject.SetActive(true); // <- poka¿ now¹
         equippedWeapon.OnEquipped();
+        equippedWeapon.GetComponentInChildren<Animator>().SetTrigger("Picked Up");
+        equippedWeapon.GetComponentInChildren<Animator>().SetBool("Holding", true);
     }
 }
